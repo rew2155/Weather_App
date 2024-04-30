@@ -40,3 +40,24 @@
 .read-the-docs {
   color: #888;
 }
+
+.daily-container{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.customButton{
+  height: 55px;
+}
+
+.currentWeather{
+  width: 450px;
+}
+
+.hourlyWeather{
+  width: 300px;
+}
+
+.weekCards{
+  width:150px;
+}
