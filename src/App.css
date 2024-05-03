@@ -1,0 +1,60 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+body {
+  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa_v0CxbaxK704uQhKRxrgNsbERq7SHXgZGw&s');
+  background-size: cover; 
+  background-position: center;
+}
+
+.customButton{
+  background-color: lightskyblue;
+  margin-left: 5px;
+}
+
+.News{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.NewsCard{
+  border: 1px solid #ccc;
+  width: 250px;
+}
+
+.hourlyForecastContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dailyForecastContainer{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.TodayHourly,
+.TomorrowHourly {
+  border:2px solid black;
+  width: 130px;
+  height: 300px;
+}
+
+.Daily{
+  border:2px solid black;
+  width: 175px;
+  height: 400px;
+}
+
+.aLink{
+  color: black;
+}
+
+.aLink:hover{
+  color: blue;
+  text-decoration: underline;
+}
+
