@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Typography, Card, CardContent, CardMedia, Grid, Link } from "@mui/material";
+import { TextField, Button, Typography, Card, CardContent, CardMedia, Grid } from "@mui/material";
 import "../App.css";
 
 const WeatherApp = () => {
@@ -47,13 +47,14 @@ const WeatherApp = () => {
     };
 
     useEffect(() => {
-        fetchNewsData();
-    }, []);
+        if (weather) {
+            fetchNewsData();
+        }
+    }, [weather]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (location.trim() !== "") {
-            // Fetch geocoding data
             const geocodingResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=10716f74624b82ef50988045391acb59`);
             const geocodingData = await geocodingResponse.json();
 
@@ -73,7 +74,7 @@ const WeatherApp = () => {
     return (
         <div>
             <Typography variant="h1" gutterBottom>Weather App</Typography>
-            <hr></hr>
+            <hr />
             <form onSubmit={handleSubmit}>
                 <TextField
                     variant="outlined"
@@ -81,38 +82,45 @@ const WeatherApp = () => {
                     value={location}
                     onChange={handleInputChange}
                 />
-                <Button className = "customButton" variant="contained" color="primary" type="submit">Get Weather</Button>
+                <Button className="customButton" variant="contained" color="primary" type="submit">Get Weather</Button>
             </form>
-            <br></br>
+            <br />
             {error && <Typography variant="body1" color="error">{error}</Typography>}
             {weather && !error && (
                 <div>
-                    <center><div className = "currentWeather">
-                        {weather.currentWeather && (
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h2">Current Weather</Typography>
-                                    {weather.weather && weather.weather.length > 0 && weather.weather[0].icon && (
-                                    <img
-                                        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                    <center>
+                        <div className="currentWeather">
+                            {weather.currentWeather && (
+                                <Card>
+                                    <CardContent>
+                                        <Typography variant="h2">Current Weather</Typography>
+                                        {weather.currentWeather.weather && weather.currentWeather.weather.length > 0 && (
+                                            <img
+                                                className="weather-icon"
+                                                src={`https://openweathermap.org/img/wn/${weather.currentWeather.weather[0].icon}@2x.png`}
                                                 alt="Weather Icon"
+                                                onError={(e) => {
+                                                    e.target.src = 'path/to/fallback-image.png'; // Fallback image URL
+                                                }}
                                             />
                                         )}
-                                    <Typography variant="body1">Description: {weather.currentWeather.weather[0].description}</Typography>
-                                    <Typography variant="body1">Main Weather Forecast: {weather.currentWeather.weather[0].main}</Typography>
-                                    <Typography variant="body1">Temperature: {Math.floor((weather.currentWeather.main.temp - 273.15) * 9 / 5 + 32)}°F</Typography>
-                                    <Typography variant="body1">Feels Like: {Math.floor((weather.currentWeather.main.feels_like - 273.15) * 9 / 5 + 32)}°F</Typography>
-                                    <Typography variant="body1">Low: {Math.floor((weather.currentWeather.main.temp_min - 273.15) * 9 / 5 + 32)}°F</Typography>
-                                    <Typography variant="body1">High: {Math.floor((weather.currentWeather.main.temp_max - 273.15) * 9 / 5 + 32)}°F</Typography>
-                                    <Typography variant="body1">Humidity: {weather.currentWeather.main.humidity} %</Typography>
-                                    <Typography variant="body1">Wind Speed: {weather.currentWeather.wind.speed} mph</Typography>
-                                </CardContent>
-                            </Card>
+                                        <Typography variant="body1">Description: {weather.currentWeather.weather[0].description}</Typography>
+                                        <Typography variant="body1">Main Weather Forecast: {weather.currentWeather.weather[0].main}</Typography>
+                                        <Typography variant="body1">Temperature: {Math.floor((weather.currentWeather.main.temp - 273.15) * 9 / 5 + 32)}°F</Typography>
+                                        <Typography variant="body1">Feels Like: {Math.floor((weather.currentWeather.main.feels_like - 273.15) * 9 / 5 + 32)}°F</Typography>
+                                        <Typography variant="body1">Low: {Math.floor((weather.currentWeather.main.temp_min - 273.15) * 9 / 5 + 32)}°F</Typography>
+                                        <Typography variant="body1">High: {Math.floor((weather.currentWeather.main.temp_max - 273.15) * 9 / 5 + 32)}°F</Typography>
+                                        <Typography variant="body1">Humidity: {weather.currentWeather.main.humidity} %</Typography>
+                                        <Typography variant="body1">Wind Speed: {weather.currentWeather.wind.speed} mph</Typography>
+                                    </CardContent>
+                                </Card>
                             )}
-                        </div></center>
-                        <br></br>
+                        </div>
+                    </center>
+                    <br />
 
-                        <center><div className="hourlyWeather">
+                    <center>
+                        <div className="hourlyWeather">
                             {weather.hourlyForecast && (
                                 <div>
                                     <Typography variant="h2">Tomorrow</Typography>
@@ -129,16 +137,19 @@ const WeatherApp = () => {
                                                             <React.Fragment key={index}>
                                                                 <Grid item>
                                                                     <Typography variant="body1">{date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Typography>
-                                                                    {/* Display weather icon for each hour */}
                                                                     {forecast.weather[0] && forecast.weather[0].icon && (
                                                                         <CardMedia
+                                                                            component="img"
+                                                                            className="weather-icon"
                                                                             image={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
                                                                             title="Weather Icon"
+                                                                            onError={(e) => {
+                                                                                e.target.src = 'path/to/fallback-image.png'; // Fallback image URL
+                                                                            }}
                                                                         />
                                                                     )}
                                                                     <Typography variant="body1">{Math.floor((forecast.main.temp - 273.15) * 9 / 5 + 32)}°F</Typography>
                                                                     <Typography variant="body1">{forecast.weather[0].description}</Typography>
-                                                                    <hr></hr>
                                                                 </Grid>
                                                                 {index < weather.hourlyForecast.list.length - 1 && <hr />} {/* Add horizontal line between hours */}
                                                             </React.Fragment>
@@ -152,112 +163,90 @@ const WeatherApp = () => {
                                     </Card>
                                 </div>
                             )}
-                        </div></center>
+                        </div>
+                    </center>
+                    <br />
 
-                        <br></br>
+                    <center>
+                        <div className="dailyForecast">
+                            {weather.dailyForecast && (
+                                <div>
+                                    <Typography variant="h2">Next Week</Typography>
+                                    <Grid container spacing={2}>
+                                        {weather.dailyForecast.list.map((forecast, index) => {
+                                            const date = new Date(forecast.dt * 1000);
+                                            const nextWeek = new Date();
+                                            nextWeek.setDate(nextWeek.getDate() + 7);
+                                            if (date <= nextWeek) {
+                                                return (
+                                                    <Grid item key={index}>
+                                                        <Card className="weekCards">
+                                                            <CardContent>
+                                                                <Typography variant="body1">Date: {date.toLocaleDateString()}</Typography>
+                                                                {forecast.weather[0].icon && (
+                                                                    <CardMedia
+                                                                        component="img"
+                                                                        className="weather-icon"
+                                                                        image={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
+                                                                        title="Weather Icon"
+                                                                        onError={(e) => {
+                                                                            e.target.src = 'path/to/fallback-image.png'; // Fallback image URL
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                                <Typography variant="body1">Temperature: {Math.floor((forecast.temp.day - 273.15) * 9 / 5 + 32)}°F</Typography>
+                                                                <Typography variant="body1">Feels Like: {Math.floor((forecast.feels_like.day - 273.15) * 9 / 5 + 32)}°F</Typography>
+                                                                <Typography variant="body1">Weather: {forecast.weather[0].description}</Typography>
+                                                            </CardContent>
+                                                        </Card>
+                                                    </Grid>
+                                                );
+                                            } else {
+                                                return null;
+                                            }
+                                        })}
+                                    </Grid>
+                                </div>
+                            )}
+                        </div>
+                    </center>
+                    <br />
 
-                        <div class = "dailyForcast">
-                        {weather.dailyForecast && (
-                            <div>
-                                <Typography variant="h2">Next Week</Typography>
+                    <center>
+                        <div className="newsContainer">
+                            <Typography variant="h2">Top News Stories</Typography>
+                            <br />
+                            {news.length > 0 ? (
                                 <Grid container spacing={2}>
-                                    {weather.dailyForecast.list.map((forecast, index) => {
-                                        const date = new Date(forecast.dt * 1000);
-                                        const nextWeek = new Date();
-                                        nextWeek.setDate(nextWeek.getDate() + 7);
-                                        if (date <= nextWeek) {
-                                            return (
-                                                <Grid item key={index}>
-                                                    <br></br>
-                                                    <Card className= "weekCards">
-                                                        <CardContent>
-                                                            <Typography variant="body1">Date: {date.toLocaleDateString()}</Typography>
-                                                            {/* Display weather icon for each day */}
-                                                            {forecast.weather[0].icon && (
-                                                                <CardMedia
-                                                                    image={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
-                                                                    title="Weather Icon"
-                                                                />
-                                                            )}
-                                                            <Typography variant="body1">Temperature (Day): {Math.floor((forecast.temp.day - 273.15) * 9 / 5 + 32)}°F</Typography>
-                                                            <Typography variant="body1">Temperature (Night): {Math.floor((forecast.temp.night - 273.15) * 9 / 5 + 32)}°F</Typography>
-                                                            <Typography variant="body1">{forecast.weather[0].description}</Typography>
-                                                        </CardContent>
-
-                                                        <br></br>
-
-                                                    </Card>
-                                                </Grid>
-                                            );
-                                        } else {
-                                            return null;
-                                        }
-                                    })}
+                                    {news.map((article, index) => (
+                                        <Grid item xs={12} sm={6} md={4} key={index}>
+                                            <Card>
+                                                {article.media && article.media.length > 0 && article.media[0]["media-metadata"] && article.media[0]["media-metadata"].length > 0 && article.media[0]["media-metadata"][0].url && (
+                                                    <CardMedia
+                                                    component="img"
+                                                    image={article.media[0]["media-metadata"][0].url}
+                                                    alt={article.title}
+                                                    style={{ width: '25%', height: '25%' }} 
+                                                />                                                
+                                                )}
+                                                <CardContent>
+                                                    <Typography variant="h6">{article.title}</Typography>
+                                                    <Typography variant="body2">{article.abstract}</Typography>
+                                                    <a href={article.url} target="_blank" rel="noopener noreferrer">Read more</a>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
                                 </Grid>
-                            </div>
-                        )}
-                    </div>
-
-                    <br></br>
-
-                    <Typography variant="h2">Trending News:</Typography>
-
-                    <br></br>
-
-                    <center><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
-                        {news.slice(0, 4).map((article, index) => (
-                            <div key={index} style={{ border: "1px solid #ccc", padding: "10px" }}>
-                                {/* Display the first available multimedia image */}
-                                {article.multimedia && article.multimedia.length > 0 && (
-                                    <img src={article.multimedia[0].url} alt={article.title} style={{ width: "100%", marginBottom: "10px" }} />
-                                )}
-                                <a href={article.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit" }}>
-                                    <h3>{article.title}</h3>
-                                </a>
-                                <p style={{ marginBottom: "10px" }}>{article.abstract}</p>
-                                {/* Render additional details */}
-                                <p style={{ fontStyle: "italic" }}>{article.byline}</p>
-                                <p>{article.published_date}</p>
-                                {article.des_facet && article.des_facet.length > 0 && (
-                                    <div>
-                                        <span style={{ fontWeight: "bold" }}>Descriptors: </span>
-                                        {article.des_facet.map((facet, index) => (
-                                            <span key={index}>{facet}{index !== article.des_facet.length - 1 ? ', ' : ''}</span>
-                                        ))}
-                                    </div>
-                                )}
-                                {article.org_facet && article.org_facet.length > 0 && (
-                                    <div>
-                                        <span style={{ fontWeight: "bold" }}>Organizations: </span>
-                                        {article.org_facet.map((facet, index) => (
-                                            <span key={index}>{facet}{index !== article.org_facet.length - 1 ? ', ' : ''}</span>
-                                        ))}
-                                    </div>
-                                )}
-                                {article.per_facet && article.per_facet.length > 0 && (
-                                    <div>
-                                        <span style={{ fontWeight: "bold" }}>People: </span>
-                                        {article.per_facet.map((facet, index) => (
-                                            <span key={index}>{facet}{index !== article.per_facet.length - 1 ? ', ' : ''}</span>
-                                        ))}
-                                    </div>
-                                )}
-                                {article.geo_facet && article.geo_facet.length > 0 && (
-                                    <div>
-                                        <span style={{ fontWeight: "bold" }}>Locations: </span>
-                                        {article.geo_facet.map((facet, index) => (
-                                            <span key={index}>{facet}{index !== article.geo_facet.length - 1 ? ', ' : ''}</span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div></center>
-    
+                            ) : (
+                                <Typography variant="body1">No news available.</Typography>
+                            )}
+                        </div>
+                    </center>
                 </div>
-                )}
-            </div>
-        );
-    }
+            )}
+        </div>
+    );
+};
 
 export default WeatherApp;

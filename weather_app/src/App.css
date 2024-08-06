@@ -61,3 +61,34 @@
 .weekCards{
   width:150px;
 }
+
+.weather-icon {
+  max-width: 100%;
+  height: auto; /* Preserve aspect ratio */
+  object-fit: contain; /* Ensure the image is not distorted */
+}
+
+.customButton {
+  margin-top: 10px;
+}
+
+.weekCards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 300px;
+  margin: auto;
+}
+
+.weather-icon {
+  width: 50px;
+  height: 50px;
+}
+
+.currentWeather .weather-icon,
+.hourlyWeather .weather-icon,
+.dailyForecast .weather-icon {
+  width: 50px;
+  height: 50px;
+}
+
